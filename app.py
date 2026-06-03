@@ -255,7 +255,7 @@ if not df.empty:
                             prompt = prompt.replace("[LOCATION_SUMMARY]", str(intersection_df['位置描述'].value_counts().to_dict()))
                             prompt = prompt.replace("[REASON_SUMMARY]", str(reason_summary))
             
-                            model = genai.GenerativeModel('gemini-1.5-flash')
+                            model = genai.GenerativeModel('gemini-2.5-flash-lite')
                             response = model.generate_content(prompt)
             
                             # 🔒 【關鍵鎖】將生成的報告本文鎖進 Streamlit 網頁記憶體
