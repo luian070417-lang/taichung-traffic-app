@@ -181,6 +181,27 @@ if not df.empty:
                 st.write("")
                 st.markdown("### 🏛️ 行政決策：智慧交通工程整修方案")
                 
+                # ==========================================
+                # 🧠 1. 記憶鎖與路口切換防呆感應機制
+                # （請把這段放在按鈕的最上方，靠最左邊，不要縮排在任何 if 裡面）
+                # ==========================================
+
+                # 用當前的經緯度組合出一個唯一的路口鑰匙
+                current_intersection_key = f"{clicked_lat:.4f}_{clicked_lon:.4f}"
+
+                # 初始化網頁記憶體
+                if "ai_report" not in st.session_state:
+                    st.session_state["ai_report"] = None
+
+                # 💡 防呆機制：如果使用者點擊了地圖上「新的路口」，自動把舊報告擦掉，避免顯示錯誤！
+                if "last_intersection" not in st.session_state or st.session_state["last_intersection"] != current_intersection_key:
+                    st.session_state["ai_report"] = None
+                    st.session_state["last_intersection"] = current_intersection_key
+                                
+                
+                # ==========================================
+                # 🚀 2. AI 診斷按鈕主體（原本位置直接整段覆蓋）
+                # ==========================================
                 if st.button("🚀 啟動 AI 多維度工程診斷與整修建議書"):
                     with st.spinner("AI 交通顧問正在交叉比對歷年大數據與台灣地方氣候特徵..."):
                         try:
@@ -188,41 +209,41 @@ if not df.empty:
                             prompt_template = """
                             你是一位精通智慧城市與交通工程學（Traffic Engineering）的政府決策顧問專家。
                             請針對台中市[DISTRICT]內，經緯度約為([LAT], [LON])的十字路口，進行事故的【多維度關聯性診斷】。
-                            
+            
                             歷史大數據交叉統計結果如下：
                             1. 歷年累積事故件數：[TOTAL_CASES]件
                             2. 月份與小時事故高發特徵：[TIME_SUMMARY]
                             3. 天候分佈特徵：[WEATHER_SUMMARY]
                             4. 事故位置特徵：[LOCATION_SUMMARY]
                             5. 官方記錄主要肇事因素統計：[REASON_SUMMARY]
-                            
+            
                             💡【重要分析步驟：台灣地方氣候與月份衝突交叉比對機制】
                             請你在大腦中優先比對上方數據中的「高發月份」與以下「台灣特有氣候型態」是否存在潛在的複合因果關聯：
                             - 5月 ~ 6月：台灣梅雨季節（連續大雨、路面容易嚴重積水打滑、視線極度不良）。
                             - 7月 ~ 9月：颱風季與極端午後雷陣雨（瞬間暴雨、積水、強風）。
                             - 10月 ~ 翌年1月：冬季東北季風（強風影響機車穩定度、冬季下午 17-18 時天色提早變黑，正逢下班尖峰，視線昏暗）。
-                            
+            
                             【篩選規則】：
                             - 如果經比對後，發現高發月份、天候描述與上述台灣氣候特徵「有明顯吻合或潛在關聯」，請務必在報告的第二部分『三大潛在複合危險因子』中明確指出，並作為後續實體設施（如排水、照明、防滑）的整修依據。
                             - 如果高發月份大多屬於平穩月份，或天候特徵皆為晴天、與台灣氣候特徵「完全沒有特別關係」，請自動忽略，不需要在報告中硬寫或捏造氣候因素。
-                            
+            
                             請幫臺中市交通局撰寫一份結構清晰、字數約 250-300 字左右的【路口整修工程決策報告】。
-                            你必須嚴格遵循以下格式輸出，並大量使用粗體字標記關鍵字，確保官員能「一眼抓到重點」：
-                            
+                            you必須嚴格遵循以下格式輸出，並大量使用粗體字標記關鍵字，確保官員能「一眼抓到重點」：
+            
                             ### 📊 1. 核心診斷結論
                             （請用 1-2 句話，一針見血地總結該路口最严峻的交通安全核心問題是什麼）
-                            
+            
                             ### ⚠️ 2. 三大潛在複合危險因子
                             - **[因子一標題]**：結合「時間/天候/位置/主要肇因」推測出第一個隱含的複合危險。（此處請依據上述機制，確認並寫出是否與台灣特定月份氣候相關）。
                             - **[因子二標題]**：結合數據推測出第二個路口環境與行為的衝突點。
                             - **[因子三標題]**：結合數據點出第三個潛在工程或宣導漏洞。
-                            
+            
                             ### 🛠️ 3. 三大實體工程改善方案（請直接開出具體藥方，拒絕空泛口號）
                             - **[方案一：號誌與車道優化]**：給出具體可動工的標線或號誌微調建議（如：左轉保護時相、反光標線、機車停等區重新規劃）。
                             - **[方案二：實體設施加強]**：增設實體設備建議（針對上述診斷之缺陷，給出如：加強夜間LED照明、增設鋪面防滑係數、改善路口排水）。
                             - **[方案三：科技執法與防制]**：針對該路口核心肇因，提報精準科技執法取締的具體項目（如：取締未依規定讓車、闖紅燈）。
                             """
-                            
+            
                             # 進行字串動態取代
                             prompt = prompt_template
                             prompt = prompt.replace("[DISTRICT]", str(selected_district))
@@ -233,17 +254,27 @@ if not df.empty:
                             prompt = prompt.replace("[WEATHER_SUMMARY]", str(intersection_df['天候描述'].value_counts().to_dict()))
                             prompt = prompt.replace("[LOCATION_SUMMARY]", str(intersection_df['位置描述'].value_counts().to_dict()))
                             prompt = prompt.replace("[REASON_SUMMARY]", str(reason_summary))
-                            
+            
                             model = genai.GenerativeModel('gemini-2.5-flash')
                             response = model.generate_content(prompt)
-                            
-                            st.markdown(f"""
-                            <div class="ai-report-box">
-                                {response.text.replace('### ', '<br><h3>').replace('- **', '<li><b>').replace('**', '</b>')}
-                            </div>
-                            """, unsafe_allow_html=True)
+            
+                            # 🔒 【關鍵鎖】將生成的報告本文鎖進 Streamlit 網頁記憶體
+                            st.session_state["ai_report"] = response.text
+            
                         except Exception as e:
                             st.error(f"AI 報告生成失敗: {e}")
+
+
+                # ==========================================
+                # 📝 3. 顯示 AI 報告的區塊
+                # （一定要放在按鈕外面！最左邊不能留空格，對齊最外層）
+                # ==========================================
+                if st.session_state["ai_report"] is not None:
+                    st.markdown(f"""
+                        <div class="ai-report-box">
+                        {st.session_state["ai_report"].replace('### ', '<br><h3>').replace('- **', '<li><b>').replace('**', '</b>')}
+                    </div>
+                    """, unsafe_allow_html=True)
         else:
             st.markdown("<div style='background-color: #ffffff; padding: 40px; text-align: center; border-radius: 10px; border: 2px dashed #cbd5e0; color: #a0aec0; font-weight: 500;'>☝️ 填報準備：請在上方地圖點擊任一【紅色大頭針】以喚醒大數據決策儀表板。</div>", unsafe_allow_html=True)
     else:
