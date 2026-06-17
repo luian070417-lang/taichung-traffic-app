@@ -187,7 +187,7 @@ else:
             # AI 推薦方案
             prompt = f"目前全台中事故最高前三名為 {top_3.index.tolist()}。預算只有 {budget} 元。請美觀地列出這三區各別該修什麼工程，並說明預算分配原因。請用列點與標題排版。"
             try:
-                model = genai.GenerativeModel("gemini-1.5-flash")
+                model = genai.GenerativeModel("gemini-2.5-flash")
                 response = model.generate_content(prompt)
                 st.markdown("---")
                 st.info(response.text)
