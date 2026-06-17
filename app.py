@@ -239,7 +239,7 @@ else:
             """.format(district_summary, input_budget, input_budget)
             
             try:
-                model = genai.GenerativeModel("gemini-2.5-flash-lite")
+                model = genai.GenerativeModel("gemini-2.5-flash")
                 response = model.generate_content(prompt)
                 st.session_state["ai_budget_top3_output"] = response.text
             except Exception as e:
