@@ -84,7 +84,7 @@ if main_function == "📊 功能一：路口點擊聯動與深度分析":
     # 過濾該區資料
     district_df = df[df['區'] == selected_district].dropna(subset=['GPS座標Y', 'GPS座標X']).copy()
     
-    # LINE 自動警報邏輯 (已修正第 90 行的引號與換行錯誤 🎯)
+    # LINE 自動警報邏輯
     current_count = len(district_df)
     if current_count > 1000: 
         alert_msg = f"🚨【警報】{selected_district}事故量異常！累計 {current_count} 件。"
@@ -162,7 +162,8 @@ if main_function == "📊 功能一：路口點擊聯動與深度分析":
             請使用 Markdown 格式，多利用 **粗體**、> 引用、以及 ### 標題，讓閱讀者能秒懂重點。
             """
             try:
-                model = genai.GenerativeModel("gemini-1.5-flash")
+                # 🎯 修正處：正確改回高額度主力模型 gemini-2.5-flash
+                model = genai.GenerativeModel("gemini-2.5-flash")
                 response = model.generate_content(prompt)
                 st.markdown("### 📋 AI 專家深度診斷報告")
                 st.success(response.text)
@@ -170,7 +171,7 @@ if main_function == "📊 功能一：路口點擊聯動與深度分析":
                 st.error(f"AI 呼叫失敗: {e}")
 
 # ------------------------------------------
-# 💰 功能二：預算 Top 3 (維持原本邏輯但美化)
+# 💰 功能二：預算 Top 3
 # ------------------------------------------
 else:
     st.title("💰 預算導向修繕最佳化系統")
@@ -187,9 +188,10 @@ else:
             # AI 推薦方案
             prompt = f"目前全台中事故最高前三名為 {top_3.index.tolist()}。預算只有 {budget} 元。請美觀地列出這三區各別該修什麼工程，並說明預算分配原因。請用列點與標題排版。"
             try:
+                # 🎯 修正處：正確改回高額度主力模型 gemini-2.5-flash
                 model = genai.GenerativeModel("gemini-2.5-flash")
                 response = model.generate_content(prompt)
                 st.markdown("---")
                 st.info(response.text)
             except Exception as e:
-                st.error(f"AI 呼交失敗: {e}")
+                st.error(f"AI 呼叫失敗: {e}")
